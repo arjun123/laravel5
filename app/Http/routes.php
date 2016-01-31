@@ -13,7 +13,17 @@
 
 Route::get('/', 'WelcomeController@index');
 
-Route::get('home', 'HomeController@index');
+// Route::get('home', 'HomeController@index');
+Route::get('home', [
+    'uses'        => 'HomeController@index',
+    'middleware'   => ['auth', 'acl'],
+    'is'           => 'user'
+    ]);
+Route::get('about', [
+    'uses'        => 'HomeController@about',
+    'middleware'   => ['auth', 'acl'],
+    'is'           => 'administrator'
+    ]);
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

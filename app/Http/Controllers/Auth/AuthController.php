@@ -4,6 +4,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Validator;
+use App\User; 
+use Illuminate\Contracts\Auth\Registrar as RegistrarContract;
 
 class AuthController extends Controller {
 
@@ -34,5 +37,39 @@ class AuthController extends Controller {
 
 		$this->middleware('guest', ['except' => 'getLogout']);
 	}
+
+	/**
+ * Get a validator for an incoming registration request.
+ *
+ * @param  array  $data
+ * @return \Illuminate\Contracts\Validation\Validator
+ */
+public function validator(array $data)
+{
+    return Validator::make($data, [
+        // 'first_name'=>'required|alpha|min:2',
+        // 'last_name'=>'required|alpha|min:2',
+        'name'=>'required|alpha|min:2',
+        'email'=>'required|email|unique:users',
+        'password'=>'required|between:6,12|confirmed|regex:/^[A-Za-z0-9@!#\$%\^&\*]+$/'
+    ]);
+}
+
+/**
+ * Create a new user instance after a valid registration.
+ *
+ * @param  array  $data
+ * @return User
+ */
+public function create(array $data)
+{
+    return User::create([
+        // 'first_name' => $data['first_name'],
+        // 'last_name' => $data['last_name'],
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => bcrypt($data['password']),
+    ]);
+}
 
 }
